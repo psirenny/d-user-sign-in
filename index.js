@@ -22,6 +22,7 @@ Component.prototype.redirect = function () {
   var error = model.get('error');
   var redirect = model.get('errorRedirect') || model.get('redirect');
   if (error && redirect) return this.app.history.push(redirect);
+  if (error) return;
   redirect = model.get('successRedirect') || model.get('redirect');
   if (redirect) return this.app.history.push(redirect);
 };
