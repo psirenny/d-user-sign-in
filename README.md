@@ -1,7 +1,7 @@
 Derby User Sign In
 ------------------
 
-Sign in component for Derby JS [https://github.com/psirenny/derby-user](User).
+Sign in component for [https://github.com/psirenny/derby-user](Derby User).
 
 Installation
 ------------
