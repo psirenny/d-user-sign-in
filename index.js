@@ -19,13 +19,11 @@ Component.prototype.focus = function () {
 
 Component.prototype.redirect = function () {
   var model = this.model;
-  model.set('redirecting', true);
   var error = model.get('error');
   var redirect = model.get('errorRedirect') || model.get('redirect');
-  if (error && redirect) return this.history.push(redirect);
-  redirect = model.get('successRedirect') ||  model.get('redirect');
-  if (redirect) return this.history.push(redirect);
-  model.del('redirecting');
+  if (error && redirect) return this.app.history.push(redirect);
+  redirect = model.get('successRedirect') || model.get('redirect');
+  if (redirect) return this.app.history.push(redirect);
 };
 
 Component.prototype.reset = function () {
@@ -54,7 +52,7 @@ Component.prototype.submit = function (e) {
       .end(function (err, res) {
         self._response(err, res, function (err) {
           if (err) return self.error(err);
-          self._submitted(function (err) {
+          self._submitted(res.body, function (err) {
             model.del('submitting');
             if (err) return self.error(err);
             self.emit('submitted');
