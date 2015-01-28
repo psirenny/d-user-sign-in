@@ -5,6 +5,11 @@ function Component () {}
 Component.prototype.create = function (model, dom) {
   if (model.get('autofocus')) this.focus();
   if (this.form) dom.addListener('submit', this.form, this.submit.bind(this));
+
+  // chrome's auto complete does not update model data
+  // so set it just in case
+  if (this.handle) model.setNull('data.handle', this.handle.value);
+  if (this.password) model.setNull('data.password', this.password.value);
 };
 
 Component.prototype.error = function (err) {
