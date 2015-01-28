@@ -12,24 +12,16 @@ Component.prototype.create = function (model, dom) {
   if (this.password) model.setNull('data.password', this.password.value);
 };
 
-Component.prototype.error = function (err) {
+Component.prototype.error = function (err, redirect) {
   this.model.del('submitting');
   this.model.set('error', err);
-  this.redirect();
+  if (!redirect) redirect = this.model.get('errorRedirect');
+  if (!redirect) redirect = this.model.get('redirect');
+  if (redirect) this.app.history.push(redirect);
 };
 
 Component.prototype.focus = function () {
   if (this.handle) this.handle.focus();
-};
-
-Component.prototype.redirect = function () {
-  var model = this.model;
-  var error = model.get('error');
-  var redirect = model.get('errorRedirect') || model.get('redirect');
-  if (error && redirect) return this.app.history.push(redirect);
-  if (error) return;
-  redirect = model.get('successRedirect') || model.get('redirect');
-  if (redirect) return this.app.history.push(redirect);
 };
 
 Component.prototype.reset = function () {
@@ -44,6 +36,9 @@ Component.prototype.submit = function (e) {
   var data = model.get('data');
   var origin = model.get('origin') || window.location.origin;
   var path = model.get('path') || '/signin';
+  var redirect = self.model.get('redirect');
+  var errorRedirect = self.model.get('errorRedirect') || redirect;
+  var successRedirect = self.model.get('successRedirect') || redirect;
   var url = model.get('url') || (origin + basePath + path);
 
   model.del('error');
@@ -60,9 +55,10 @@ Component.prototype.submit = function (e) {
           if (err) return self.error(err);
           self._submitted(res.body, function (err) {
             model.del('submitting');
-            if (err) return self.error(err);
+            if (err) return self.error(err, errorRedirect);
             self.emit('submitted');
-            self.redirect();
+            if (!successRedirect) return;
+            self.app.history.push(successRedirect);
           });
         });
       });
