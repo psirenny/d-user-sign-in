@@ -54,10 +54,9 @@ Component.prototype.submit = function (e) {
         self._response(err, res, function (err) {
           if (err) return self.error(err);
           self._submitted(res.body, function (err) {
-            model.del('submitting');
             if (err) return self.error(err, errorRedirect);
             self.emit('submitted');
-            if (!successRedirect) return;
+            if (!successRedirect) return model.del('submitting');;
             self.app.history.push(successRedirect);
           });
         });
